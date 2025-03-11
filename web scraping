@@ -1,0 +1,535 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "3c14a1da-e85f-415d-8db8-208552b155d8",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "import requests\n",
+    "from bs4 import BeautifulSoup"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "17cc562f-5436-4dcf-a5da-d704f2992795",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.162 Safari/537.36'}\n",
+    "a = requests.get('https://www.ambitionbox.com/list-of-companies?page=1',headers=headers).text"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "db591001-eedc-4685-9393-3cec052ff82a",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "soup = BeautifulSoup(a,'lxml')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "926412cc-d101-4e5a-b0b9-e7d52f6bb8be",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "0843c81c-a159-4936-8eb3-92131271c896",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'Companies in India'"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "soup.find_all('h1')[0].text.strip()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "649d5948-3a55-46ce-88ae-d24a4247209c",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "company = soup.find_all('div',class_ = 'companyCardWrapper__primaryInformation')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "1412f935-ed37-473b-8239-d59e94d3e7dc",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "20"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "len(company)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 43,
+   "id": "1d78442a-586b-4611-a268-79fee93e027b",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "name = []\n",
+    "rating1 = []\n",
+    "reviews = []\n",
+    "\n",
+    "for i in company:\n",
+    "    headings = i.find_all('h2')  # Get all h2 elements inside each company\n",
+    "    for a in headings:  # Iterate over each h2 element\n",
+    "       name.append(a.text.strip())  # Extract and print the text\n",
+    "    rat = i.find_all('div',class_ = 'rating_text rating_text--md')\n",
+    "    for b in rat:\n",
+    "        rating1.append(b.text.strip())\n",
+    "    rev = i.find_all('span', class_= 'companyCardWrapper__companyRatingCount') \n",
+    "    for c in rev:\n",
+    "        reviews.append(c.text.strip())\n",
+    "   \n",
+    "    \n",
+    "        \n",
+    "df = pd.DataFrame({'name':name, \n",
+    "                   'rating':rating1,\n",
+    "                   'reviews':reviews})\n",
+    "    \n",
+    "    \n",
+    "    \n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 45,
+   "id": "e840485f-71cc-44b9-849f-ee10686e18ea",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>name</th>\n",
+       "      <th>rating</th>\n",
+       "      <th>reviews</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>TCS</td>\n",
+       "      <td>3.7</td>\n",
+       "      <td>(90.3k)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Accenture</td>\n",
+       "      <td>3.8</td>\n",
+       "      <td>(56.8k)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Wipro</td>\n",
+       "      <td>3.7</td>\n",
+       "      <td>(53.4k)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Cognizant</td>\n",
+       "      <td>3.7</td>\n",
+       "      <td>(50.5k)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>Capgemini</td>\n",
+       "      <td>3.7</td>\n",
+       "      <td>(42k)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>HDFC Bank</td>\n",
+       "      <td>3.9</td>\n",
+       "      <td>(39.9k)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>Infosys</td>\n",
+       "      <td>3.6</td>\n",
+       "      <td>(39.6k)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>ICICI Bank</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>(38.4k)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>HCLTech</td>\n",
+       "      <td>3.5</td>\n",
+       "      <td>(36.4k)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>Tech Mahindra</td>\n",
+       "      <td>3.5</td>\n",
+       "      <td>(35.3k)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>10</th>\n",
+       "      <td>Genpact</td>\n",
+       "      <td>3.8</td>\n",
+       "      <td>(31.7k)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>11</th>\n",
+       "      <td>Teleperformance</td>\n",
+       "      <td>3.9</td>\n",
+       "      <td>(29.9k)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>12</th>\n",
+       "      <td>Concentrix Corporation</td>\n",
+       "      <td>3.8</td>\n",
+       "      <td>(26.6k)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>13</th>\n",
+       "      <td>Axis Bank</td>\n",
+       "      <td>3.8</td>\n",
+       "      <td>(25.6k)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>14</th>\n",
+       "      <td>Amazon</td>\n",
+       "      <td>4.1</td>\n",
+       "      <td>(25.3k)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>15</th>\n",
+       "      <td>Jio</td>\n",
+       "      <td>3.9</td>\n",
+       "      <td>(23.2k)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>16</th>\n",
+       "      <td>iEnergizer</td>\n",
+       "      <td>4.6</td>\n",
+       "      <td>(22.6k)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>17</th>\n",
+       "      <td>Reliance Retail</td>\n",
+       "      <td>3.9</td>\n",
+       "      <td>(22.5k)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>18</th>\n",
+       "      <td>IBM</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>(22.1k)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>19</th>\n",
+       "      <td>LTIMindtree</td>\n",
+       "      <td>3.8</td>\n",
+       "      <td>(21.1k)</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                      name rating  reviews\n",
+       "0                      TCS    3.7  (90.3k)\n",
+       "1                Accenture    3.8  (56.8k)\n",
+       "2                    Wipro    3.7  (53.4k)\n",
+       "3                Cognizant    3.7  (50.5k)\n",
+       "4                Capgemini    3.7    (42k)\n",
+       "5                HDFC Bank    3.9  (39.9k)\n",
+       "6                  Infosys    3.6  (39.6k)\n",
+       "7               ICICI Bank    4.0  (38.4k)\n",
+       "8                  HCLTech    3.5  (36.4k)\n",
+       "9            Tech Mahindra    3.5  (35.3k)\n",
+       "10                 Genpact    3.8  (31.7k)\n",
+       "11         Teleperformance    3.9  (29.9k)\n",
+       "12  Concentrix Corporation    3.8  (26.6k)\n",
+       "13               Axis Bank    3.8  (25.6k)\n",
+       "14                  Amazon    4.1  (25.3k)\n",
+       "15                     Jio    3.9  (23.2k)\n",
+       "16              iEnergizer    4.6  (22.6k)\n",
+       "17         Reliance Retail    3.9  (22.5k)\n",
+       "18                     IBM    4.0  (22.1k)\n",
+       "19             LTIMindtree    3.8  (21.1k)"
+      ]
+     },
+     "execution_count": 45,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 49,
+   "id": "69db7651-4cae-4bc7-b9a3-a9598b369a40",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 20 entries, 0 to 19\n",
+      "Data columns (total 3 columns):\n",
+      " #   Column   Non-Null Count  Dtype \n",
+      "---  ------   --------------  ----- \n",
+      " 0   name     20 non-null     object\n",
+      " 1   rating   20 non-null     object\n",
+      " 2   reviews  20 non-null     object\n",
+      "dtypes: object(3)\n",
+      "memory usage: 612.0+ bytes\n"
+     ]
+    }
+   ],
+   "source": [
+    "df.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "ddaee21f-7045-4b92-8f27-5667ad33082c",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 85,
+   "id": "df2ceeb4-a659-4ac9-b62e-2874715bd605",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "finale = pd.DataFrame()\n",
+    "for j in range(1,10):\n",
+    "   headerss = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.162 Safari/537.36'}\n",
+    "   a = requests.get('https://www.ambitionbox.com/list-of-companies?page={}'.format(j),headers=headerss).text\n",
+    "   soup1 = BeautifulSoup(a,'lxml') \n",
+    "   company = soup.find_all('div',class_ = 'companyCardWrapper__primaryInformation')\n",
+    "   name1 = []\n",
+    "   rating2 = []\n",
+    "   reviews1 = []\n",
+    "\n",
+    "   for i in company:\n",
+    "        headings = i.find_all('h2')  # Get all h2 elements inside each company\n",
+    "        for a in headings:  # Iterate over each h2 element\n",
+    "          name1.append(a.text.strip())  # Extract and print the text\n",
+    "        rat = i.find_all('div',class_ = 'rating_text rating_text--md')\n",
+    "        for b in rat:\n",
+    "          rating2.append(b.text.strip())\n",
+    "        rev = i.find_all('span', class_= 'companyCardWrapper__companyRatingCount') \n",
+    "        for c in rev:\n",
+    "          reviews1.append(c.text.strip())\n",
+    "   \n",
+    "    \n",
+    "   df = pd.DataFrame({'name':name, \n",
+    "                   'rating':rating1,\n",
+    "                   'reviews':reviews})\n",
+    "    \n",
+    "    \n",
+    "   "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 89,
+   "id": "5b5b0988-291c-4c0f-9d5d-34cae84ec933",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>name</th>\n",
+       "      <th>rating</th>\n",
+       "      <th>reviews</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>15</th>\n",
+       "      <td>Jio</td>\n",
+       "      <td>3.9</td>\n",
+       "      <td>(23.2k)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>16</th>\n",
+       "      <td>iEnergizer</td>\n",
+       "      <td>4.6</td>\n",
+       "      <td>(22.6k)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>17</th>\n",
+       "      <td>Reliance Retail</td>\n",
+       "      <td>3.9</td>\n",
+       "      <td>(22.5k)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>18</th>\n",
+       "      <td>IBM</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>(22.1k)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>19</th>\n",
+       "      <td>LTIMindtree</td>\n",
+       "      <td>3.8</td>\n",
+       "      <td>(21.1k)</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "               name rating  reviews\n",
+       "15              Jio    3.9  (23.2k)\n",
+       "16       iEnergizer    4.6  (22.6k)\n",
+       "17  Reliance Retail    3.9  (22.5k)\n",
+       "18              IBM    4.0  (22.1k)\n",
+       "19      LTIMindtree    3.8  (21.1k)"
+      ]
+     },
+     "execution_count": 89,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df.tail()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "d75fc23b-c01a-4b24-a9d1-e684b43b61e9",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.11.7"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
